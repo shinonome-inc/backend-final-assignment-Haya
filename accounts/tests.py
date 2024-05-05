@@ -91,7 +91,9 @@ class TestSignupView(TestCase):
         response = self.client.post(self.url, valid_data)
         response = self.client.post(self.url, invalid_data)
         form = response.context["form"]
-        self.assertFalse(User.objects.filter(username=invalid_data["username"]).exists())
+        self.assertFalse(
+            User.objects.filter(username=invalid_data["email"]).exists()
+        )  # usernameは存在するので、emailでチェック
         self.assertFalse(form.is_valid())
         self.assertIn("同じユーザー名が既に登録済みです。", form.errors["username"])
 
@@ -104,9 +106,7 @@ class TestSignupView(TestCase):
         }
         response = self.client.post(self.url, invalid_data)
         form = response.context["form"]
-        self.assertFalse(
-            User.objects.filter(username=invalid_data["username"]).exists()
-        )  # usernameは存在するので、emailでチェック
+        self.assertFalse(User.objects.filter(username=invalid_data["email"]).exists())
         self.assertFalse(form.is_valid())
         self.assertIn("有効なメールアドレスを入力してください。", form.errors["email"])
 
@@ -121,7 +121,7 @@ class TestSignupView(TestCase):
         form = response.context["form"]
         self.assertFalse(User.objects.filter(username=invalid_data["username"]).exists())
         self.assertFalse(form.is_valid())
-        self.assertIn("このパスワードは短すぎます。最低 8 文字以上必要です。", form.errors["password1"])
+        self.assertIn("このパスワードは短すぎます。最低 8 文字以上必要です。", form.errors["password2"])
 
     def test_failure_post_with_password_similar_to_username(self):
         invalid_data = {
@@ -134,7 +134,7 @@ class TestSignupView(TestCase):
         form = response.context["form"]
         self.assertFalse(User.objects.filter(username=invalid_data["username"]).exists())
         self.assertFalse(form.is_valid())
-        self.assertIn("このパスワードは ユーザー名 と似すぎています。", form.errors["password1"])
+        self.assertIn("このパスワードは ユーザー名 と似すぎています。", form.errors["password2"])
 
     def test_failure_post_with_only_numbers_password(self):
         invalid_data = {
@@ -147,7 +147,7 @@ class TestSignupView(TestCase):
         form = response.context["form"]
         self.assertFalse(User.objects.filter(username=invalid_data["username"]).exists())
         self.assertFalse(form.is_valid())
-        self.assertIn("このパスワードは数字しか使われていません。", form.errors["password1"])
+        self.assertIn("このパスワードは数字しか使われていません。", form.errors["password2"])
 
     def test_failure_post_with_mismatch_password(self):
         invalid_data = {
