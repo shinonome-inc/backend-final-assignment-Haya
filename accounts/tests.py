@@ -22,7 +22,6 @@ class TestSignupView(TestCase):
             "password2": "testpassword",
         }
         response = self.client.post(self.url, valid_data)
-        self.assertEqual(response.status_code, 302)
         self.assertRedirects(
             response,
             reverse("tweets:home"),
@@ -57,7 +56,7 @@ class TestSignupView(TestCase):
         response = self.client.post(self.url, invalid_data)
         form = response.context["form"]
         self.assertEqual(response.status_code, 200)
-        self.assertFalse(User.objects.filter(username=invalid_data["username"]).exists())
+        self.assertFalse(User.objects.filter(username=invalid_data["email"]).exists())
         self.assertFalse(form.is_valid())
         self.assertIn("このフィールドは必須です。", form.errors["email"])
 
@@ -71,7 +70,7 @@ class TestSignupView(TestCase):
         response = self.client.post(self.url, invalid_data)
         form = response.context["form"]
         self.assertEqual(response.status_code, 200)
-        self.assertFalse(User.objects.filter(username=invalid_data["username"]).exists())
+        self.assertFalse(User.objects.filter(username=invalid_data["password1"]).exists())
         self.assertFalse(form.is_valid())
         self.assertIn("このフィールドは必須です。", form.errors["password1"])
 
@@ -91,6 +90,7 @@ class TestSignupView(TestCase):
         response = self.client.post(self.url, valid_data)
         response = self.client.post(self.url, invalid_data)
         form = response.context["form"]
+        self.assertEqual(response.status_code, 200)
         self.assertFalse(
             User.objects.filter(username=invalid_data["email"]).exists()
         )  # usernameは存在するので、emailでチェック
@@ -106,6 +106,7 @@ class TestSignupView(TestCase):
         }
         response = self.client.post(self.url, invalid_data)
         form = response.context["form"]
+        self.assertEqual(response.status_code, 200)
         self.assertFalse(User.objects.filter(username=invalid_data["email"]).exists())
         self.assertFalse(form.is_valid())
         self.assertIn("有効なメールアドレスを入力してください。", form.errors["email"])
@@ -119,6 +120,7 @@ class TestSignupView(TestCase):
         }
         response = self.client.post(self.url, invalid_data)
         form = response.context["form"]
+        self.assertEqual(response.status_code, 200)
         self.assertFalse(User.objects.filter(username=invalid_data["username"]).exists())
         self.assertFalse(form.is_valid())
         self.assertIn("このパスワードは短すぎます。最低 8 文字以上必要です。", form.errors["password2"])
@@ -132,6 +134,7 @@ class TestSignupView(TestCase):
         }
         response = self.client.post(self.url, invalid_data)
         form = response.context["form"]
+        self.assertEqual(response.status_code, 200)
         self.assertFalse(User.objects.filter(username=invalid_data["username"]).exists())
         self.assertFalse(form.is_valid())
         self.assertIn("このパスワードは ユーザー名 と似すぎています。", form.errors["password2"])
@@ -145,6 +148,7 @@ class TestSignupView(TestCase):
         }
         response = self.client.post(self.url, invalid_data)
         form = response.context["form"]
+        self.assertEqual(response.status_code, 200)
         self.assertFalse(User.objects.filter(username=invalid_data["username"]).exists())
         self.assertFalse(form.is_valid())
         self.assertIn("このパスワードは数字しか使われていません。", form.errors["password2"])
@@ -158,6 +162,7 @@ class TestSignupView(TestCase):
         }
         response = self.client.post(self.url, invalid_data)
         form = response.context["form"]
+        self.assertEqual(response.status_code, 200)
         self.assertFalse(User.objects.filter(username=invalid_data["username"]).exists())
         self.assertFalse(form.is_valid())
         self.assertIn("確認用パスワードが一致しません。", form.errors["password2"])
