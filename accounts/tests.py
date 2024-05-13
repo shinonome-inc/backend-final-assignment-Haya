@@ -31,6 +31,17 @@ class TestSignupView(TestCase):
         self.assertTrue(User.objects.filter(username=valid_data["username"]).exists())
         self.assertIn(SESSION_KEY, self.client.session)
 
+    def test_failure_post_with_empty_form(self):
+        response = self.client.post(self.url, {})
+        form = response.context["form"]
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(User.objects.filter(username="").exists())
+        self.assertFalse(form.is_valid())
+        self.assertIn("このフィールドは必須です。", form.errors["username"])
+        self.assertIn("このフィールドは必須です。", form.errors["email"])
+        self.assertIn("このフィールドは必須です。", form.errors["password1"])
+        self.assertIn("このフィールドは必須です。", form.errors["password2"])
+
     def test_failure_post_with_empty_username(self):
         invalid_data = {
             "username": "",
