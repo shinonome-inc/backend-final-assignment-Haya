@@ -3,6 +3,7 @@
 {% block title %}Home{% endblock %} ← titleを入れる
 
 {% block content %}
+<a href="{% url 'logout' %}" id="logout" class="btn btn-primary mb-3 mx-3">ログアウト</a>
 <h1>Homeです</h1>
 
 {% endblock %}
