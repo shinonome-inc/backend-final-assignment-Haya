@@ -177,18 +177,20 @@ class TestSignupView(TestCase):
         self.assertIn("確認用パスワードが一致しません。", form.errors["password2"])
 
 
-# class TestLoginView(TestCase):
-#     def test_success_get(self):
+class TestLoginView(TestCase):
+    def setUp(self):
+        self.url = reverse("accounts:login")
+    def test_success_get(self):
 
-#     def test_success_post(self):
+    def test_success_post(self):
 
-#     def test_failure_post_with_not_exists_user(self):
+    def test_failure_post_with_not_exists_user(self):
 
-#     def test_failure_post_with_empty_password(self):
+    def test_failure_post_with_empty_password(self):
 
 
-# class TestLogoutView(TestCase):
-#     def test_success_post(self):
+class TestLogoutView(TestCase):
+    def test_success_post(self):
 
 
 # class TestUserProfileView(TestCase):

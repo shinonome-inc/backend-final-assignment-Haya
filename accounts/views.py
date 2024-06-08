@@ -4,6 +4,8 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView
 
 from .forms import SignupForm
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import TemplateView
 
 
 class SignupView(CreateView):
@@ -18,3 +20,7 @@ class SignupView(CreateView):
         user = authenticate(self.request, username=username, password=password)
         login(self.request, user)
         return response
+
+
+class UserProfileView(LoginRequiredMixin, TemplateView):
+    template_name = 'accounts/user_profile.html'
