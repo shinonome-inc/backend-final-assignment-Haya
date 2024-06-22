@@ -1,8 +1,6 @@
-{% extends "base.html" %} ← base.htmlを継承
-
-{% block title %}Profile{% endblock %} 
+{% extends 'base.html' %}
 
 {% block content %}
-<h1>Welcome, {{ user.username }}!</h1>
-
+<h1>ユーザープロフィール</h1>
+<p>ユーザー名: {{ user.username }}</p>
 {% endblock %}

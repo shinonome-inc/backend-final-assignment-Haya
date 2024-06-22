@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth import SESSION_KEY, get_user_model
 from django.test import TestCase
 from django.urls import reverse
@@ -180,17 +181,67 @@ class TestSignupView(TestCase):
 class TestLoginView(TestCase):
     def setUp(self):
         self.url = reverse("accounts:login")
+
     def test_success_get(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "registration/login.html")
 
     def test_success_post(self):
+        User.objects.create_user(username="testuser", password="testpassword")
+        valid_data = {"username": "testuser", "password": "testpassword"}
+        response = self.client.post(self.url, valid_data)
+        self.assertRedirects(
+            response,
+            settings.LOGIN_REDIRECT_URL,
+            status_code=302,
+            target_status_code=200,
+        )
+        self.assertIn(SESSION_KEY, self.client.session)
 
-    def test_failure_post_with_not_exists_user(self):
+    def test_failure_post_with_empty_form(self):
+        response = self.client.post(self.url, {})
+        form = response.context["form"]
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(form.is_valid())
+        self.assertIn("このフィールドは必須です。", form.errors["username"])
+        self.assertIn("このフィールドは必須です。", form.errors["password"])
+
+    def test_failure_post_with_empty_username(self):
+        invalid_data = {
+            "username": "",
+            "password": "testpassword",
+        }
+        response = self.client.post(self.url, invalid_data)
+        form = response.context["form"]
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(form.is_valid())
+        self.assertIn("このフィールドは必須です。", form.errors["username"])
 
     def test_failure_post_with_empty_password(self):
+        invalid_data = {
+            "username": "testuser",
+            "password": "",
+        }
+        response = self.client.post(self.url, invalid_data)
+        form = response.context["form"]
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(form.is_valid())
+        self.assertIn("このフィールドは必須です。", form.errors["password"])
 
 
 class TestLogoutView(TestCase):
     def test_success_post(self):
+        self.client.login(username="testuser", password="testpassword")
+        url = reverse("logout")
+        response = self.client.post(url)
+        self.assertRedirects(
+            response,
+            settings.LOGOUT_REDIRECT_URL,
+            status_code=302,
+            target_status_code=200,
+        )
+        self.assertNotIn(SESSION_KEY, self.client.session)
 
 
 # class TestUserProfileView(TestCase):

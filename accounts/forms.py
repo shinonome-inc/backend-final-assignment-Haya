@@ -8,6 +8,3 @@ class SignupForm(UserCreationForm):
     class Meta:
         model = User  # model = get_user_model() は NG
         fields = ("username", "email")
-
-        
-    
