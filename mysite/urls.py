@@ -22,4 +22,5 @@ urlpatterns = [
     path("accounts/", include("accounts.urls")),
     path("tweets/", include("tweets.urls")),
     path("", include("welcome.urls")),
+    path("accounts/", include("django.contrib.auth.urls")),  # 追加 logoutを使う場合
 ]
